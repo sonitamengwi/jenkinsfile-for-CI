@@ -1,0 +1,38 @@
+pipeline {
+    agent { label 'slave1' }
+    environment {
+        SONAR_HOST_URL = 'http://sonarqube.example.com'
+        NEXUS_URL = 'http://nexus.example.com'
+    }
+        tools{
+        maven "maven3.8.6"
+    }
+        stages{
+        stage('CloningCodefromGithubRepository'){
+            steps{
+                sh "echo cloning Application latest version"
+                git "https://github.com/ $GitHubName/python-application"
+            }
+        }
+
+
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+        stage('SonarQube analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
+        stage('Upload to Nexus') {
+            steps {
+                sh "mvn deploy -DaltDeploymentRepository=releases::default::${NEXUS_URL}/repository/releases"
+            }
+        }
+    }
+}
