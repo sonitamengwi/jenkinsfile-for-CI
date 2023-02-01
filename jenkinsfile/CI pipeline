@@ -8,10 +8,10 @@ pipeline {
         maven "maven3.8.6"
     }
         stages{
-        stage('CloningCodefromGithubRepository'){
+        stage('Cloning Code'){
             steps{
                 sh "echo cloning Application latest version"
-                git "https://github.com/ $GitHubName/python-application"
+                git "https://github.com/sonitamengwi/jenkinsfile-for-CI"
             }
         }
 
